@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<title>Revista IPESPE EDUC</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap">
+<style>
+/* Leitor de revista: palco azul-marinho da marca, livro centralizado, barra de controles embaixo, miniaturas por espelhada */
+:root {
+  --navy: #1b2347;
+  --navy-2: #232d58;
+  --navy-3: #2e3a6e;
+  --cyan: #1ba1e2;
+  --ink: #eef3fb;
+  --muted: #9fb0d3;
+  --display: "Montserrat", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: radial-gradient(120% 90% at 50% 35%, var(--navy-3) 0%, var(--navy) 60%, #141a37 100%);
+  background-color: var(--navy);
+  color: var(--ink);
+  font-family: var(--display);
+  overflow: hidden;
+}
+.app {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  box-sizing: border-box;
+}
+header {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding-block: 12px 6px;
+}
+.brand { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.brand .eyebrow { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--cyan); font-weight: 700; }
+.brand .name { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stage { position: relative; min-height: 0; display: grid; place-items: center; padding-block: 8px; }
+#book-wrap { position: relative; transition: transform .55s ease; }
+@media (prefers-reduced-motion: reduce) { #book-wrap { transition: none; } }
+#book { margin: 0 auto; }
+.page { background: #fff; overflow: hidden; }
+.page img { display: block; width: 100%; height: 100%; object-fit: cover; max-width: none; user-select: none; -webkit-user-drag: none; pointer-events: none; }
+.toc-link {
+  position: absolute; left: 59.6%; width: 32.8%;
+  border-radius: 4px; cursor: pointer; display: block;
+  transition: background-color .15s;
+}
+.toc-link:hover, .toc-link:focus-visible { background: rgba(27, 161, 226, .16); outline: 2px solid rgba(27,161,226,.55); outline-offset: -2px; }
+
+.controls {
+  display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+  padding-block: 6px max(12px, env(safe-area-inset-bottom, 0px));
+}
+button.ctl {
+  font: 600 13px/1 var(--display); color: var(--ink);
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14);
+  height: 40px; min-width: 40px; padding: 0 12px; border-radius: 999px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+}
+button.ctl:hover { background: rgba(255,255,255,.16); }
+button.ctl:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+button.ctl:disabled { opacity: .35; cursor: default; }
+button.ctl svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.counter { font-size: 13px; font-weight: 600; color: var(--muted); min-width: 88px; text-align: center; font-variant-numeric: tabular-nums; }
+.counter b { color: var(--ink); }
+
+.thumbs {
+  display: flex; gap: 10px; justify-content: center; overflow-x: auto; padding: 4px 2px 2px; max-width: 100%;
+  scrollbar-width: thin;
+}
+.thumb {
+  flex: 0 0 auto; display: flex; gap: 1px; padding: 3px; border-radius: 6px; cursor: pointer;
+  background: transparent; border: 2px solid transparent;
+}
+.thumb img { height: 54px; width: auto; display: block; border-radius: 2px; }
+.thumb:hover { border-color: rgba(255,255,255,.25); }
+.thumb[aria-current="true"] { border-color: var(--cyan); }
+.thumb:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.thumb span { position: absolute; }
+.hint { font-size: 11px; color: var(--muted); text-align: center; padding-bottom: 2px; }
+@media (max-width: 640px) {
+  .thumbs { display: none; }
+  .brand .name { font-size: 13px; }
+  .label-txt { display: none; }
+}
+@media (max-height: 560px) { .thumbs, .hint { display: none; } }
+@media (prefers-reduced-motion: reduce) { .toc-link { transition: none; } }
+</style>
+
+<div class="app" id="app">
+  <header>
+    <div class="brand">
+      <span class="eyebrow">IPESPE EDUC</span>
+      <span class="name">Formação para Lideranças Educacionais</span>
+    </div>
+    <button class="ctl" id="fs" type="button" aria-label="Tela cheia" title="Tela cheia">
+      <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+      <span class="label-txt">Tela cheia</span>
+    </button>
+  </header>
+
+  <div class="stage" id="stage">
+    <div id="book-wrap">
+      <div id="book">
+        <div class="page" data-density="hard"><img src="paginas/p01.jpg" alt="Capa: Formação para Lideranças Educacionais"></div>
+        <div class="page"><img src="paginas/p02.jpg" alt="Apresentação e sumário">
+          <a class="toc-link" href="#pagina-2" data-go="2" style="top:29.6%;height:5.6%" aria-label="Ir para Apresentação, página 2"></a>
+          <a class="toc-link" href="#pagina-3" data-go="3" style="top:35.2%;height:5.7%" aria-label="Ir para O que a formação oferece, página 3"></a>
+          <a class="toc-link" href="#pagina-4" data-go="4" style="top:40.9%;height:5.2%" aria-label="Ir para Coordenação, página 4"></a>
+          <a class="toc-link" href="#pagina-5" data-go="5" style="top:46.2%;height:5.5%" aria-label="Ir para Panorama da educação brasileira, página 5"></a>
+          <a class="toc-link" href="#pagina-6" data-go="6" style="top:51.7%;height:5.7%" aria-label="Ir para Panorama da educação brasileira, página 6"></a>
+          <a class="toc-link" href="#pagina-7" data-go="7" style="top:57.4%;height:5.3%" aria-label="Ir para Primeira infância, página 7"></a>
+          <a class="toc-link" href="#pagina-8" data-go="8" style="top:62.7%;height:5.2%" aria-label="Ir para Primeira infância, página 8"></a>
+        </div>
+        <div class="page"><img src="paginas/p03.jpg" alt="O que a formação oferece"></div>
+        <div class="page"><img src="paginas/p04.jpg" alt="Coordenação"></div>
+        <div class="page"><img src="paginas/p05.jpg" alt="Panorama da educação brasileira"></div>
+        <div class="page"><img src="paginas/p06.jpg" alt="Panorama da educação brasileira: os workshops"></div>
+        <div class="page"><img src="paginas/p07.jpg" alt="Primeira infância"></div>
+        <div class="page" data-density="hard"><img src="paginas/p08.jpg" alt="Primeira infância: conteúdos"></div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="controls">
+      <button class="ctl" id="first" type="button" aria-label="Capa" title="Capa">
+        <svg viewBox="0 0 24 24"><path d="M18 6l-6 6 6 6M11 6l-6 6 6 6"/></svg>
+      </button>
+      <button class="ctl" id="prev" type="button" aria-label="Página anterior" title="Página anterior (←)">
+        <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <div class="counter" id="counter" aria-live="polite"><b>1</b> / 8</div>
+      <button class="ctl" id="next" type="button" aria-label="Próxima página" title="Próxima página (→)">
+        <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <button class="ctl" id="last" type="button" aria-label="Última página" title="Última página">
+        <svg viewBox="0 0 24 24"><path d="M6 6l6 6-6 6M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+    <nav class="thumbs" id="thumbs" aria-label="Miniaturas das páginas"></nav>
+    <div class="hint">Arraste o canto da página, use as setas do teclado ou clique no sumário</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+<script>window.St || document.write('<script src="lib/page-flip.browser.js"><\/script>');</script>
+<script>
+(function () {
+  var TOTAL = 8, PW = 595.28, PH = 841.89;
+  var stage = document.getElementById('stage');
+  var wrap = document.getElementById('book-wrap');
+  var bookEl = document.getElementById('book');
+  var counter = document.getElementById('counter');
+  var thumbsEl = document.getElementById('thumbs');
+  var flip = null, current = 0;
+
+  var minW = 321;
+
+  function avail() {
+    var cs = getComputedStyle(stage);
+    return { w: stage.clientWidth, h: stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) };
+  }
+
+  function fit() {
+    var a = avail(), rD = 2 * PW / PH, rS = PW / PH;
+    var wD = Math.min(a.w, a.h * rD);
+    var dbl = wD >= 2 * minW;
+    var r = dbl ? rD : rS;
+    var w = Math.max(120, Math.floor(dbl ? wD : Math.min(a.w, a.h * rS)));
+    wrap.style.width = w + 'px';
+    wrap.style.height = Math.floor(w / r) + 'px';
+    return w;
+  }
+
+  function spreadOf(i) {
+    if (!flip || flip.getOrientation() === 'portrait' || i === 0) return [i];
+    var left = i % 2 === 1 ? i : i - 1;
+    return left + 1 < TOTAL ? [left, left + 1] : [left];
+  }
+
+  function update(i) {
+    current = i;
+    var s = spreadOf(i);
+    var label = s.length === 2 ? (s[0] + 1) + '–' + (s[1] + 1) : String(s[0] + 1);
+    counter.innerHTML = '<b>' + label + '</b> / ' + TOTAL;
+    document.getElementById('prev').disabled = document.getElementById('first').disabled = (i === 0);
+    var atEnd = s[s.length - 1] >= TOTAL - 1;
+    var shift = 0;
+    if (flip && flip.getOrientation() !== 'portrait' && s.length === 1) shift = (s[0] === 0) ? -25 : 25;
+    wrap.style.transform = shift ? 'translateX(' + shift + '%)' : '';
+    document.getElementById('next').disabled = document.getElementById('last').disabled = atEnd;
+    Array.prototype.forEach.call(thumbsEl.children, function (t) {
+      var pages = t.getAttribute('data-pages').split(',').map(Number);
+      t.setAttribute('aria-current', pages.indexOf(i) >= 0 ? 'true' : 'false');
+    });
+    var h = '#pagina-' + (i + 1);
+    if (location.hash !== h) { try { history.replaceState(null, '', h); } catch (e) {} }
+  }
+
+  function buildThumbs() {
+    var groups = [[0], [1, 2], [3, 4], [5, 6], [7]];
+    groups.forEach(function (g) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'thumb';
+      b.setAttribute('data-pages', g.join(','));
+      b.setAttribute('aria-label', g.length === 2 ? 'Páginas ' + (g[0] + 1) + ' e ' + (g[1] + 1) : 'Página ' + (g[0] + 1));
+      g.forEach(function (p) {
+        var im = document.createElement('img');
+        im.src = 'paginas/t0' + (p + 1) + '.jpg'; im.alt = '';
+        b.appendChild(im);
+      });
+      b.addEventListener('click', function () { go(g[0]); });
+      thumbsEl.appendChild(b);
+    });
+  }
+
+  function go(i) {
+    if (!flip) return;
+    i = Math.max(0, Math.min(TOTAL - 1, i));
+    if (spreadOf(i).indexOf(current) >= 0) return;
+    flip.flip(i);
+  }
+
+  function pageFromHash() {
+    var m = /^#pagina-(\d+)$/.exec(location.hash);
+    return m ? Math.max(0, Math.min(TOTAL - 1, parseInt(m[1], 10) - 1)) : 0;
+  }
+
+  function init() {
+    var a = avail();
+    minW = Math.max(120, Math.min(321, Math.floor(Math.min(a.w, a.h * PW / PH))));
+    fit();
+    flip = new St.PageFlip(bookEl, {
+      width: 595, height: 842, size: 'stretch',
+      minWidth: minW, maxWidth: 3000, minHeight: Math.floor(minW * PH / PW), maxHeight: 4240,
+      showCover: true, usePortrait: true, autoSize: true,
+      maxShadowOpacity: 0.45, flippingTime: 750, drawShadow: true,
+      mobileScrollSupport: false, clickEventForward: true, swipeDistance: 30,
+      startPage: pageFromHash()
+    });
+    flip.loadFromHTML(document.querySelectorAll('#book .page'));
+    flip.on('flip', function (e) { update(e.data); });
+    flip.on('changeOrientation', function () { update(flip.getCurrentPageIndex()); });
+    update(flip.getCurrentPageIndex());
+  }
+
+  document.getElementById('prev').addEventListener('click', function () { flip && flip.flipPrev(); });
+  document.getElementById('next').addEventListener('click', function () { flip && flip.flipNext(); });
+  document.getElementById('first').addEventListener('click', function () { go(0); });
+  document.getElementById('last').addEventListener('click', function () { go(TOTAL - 1); });
+
+  document.querySelectorAll('.toc-link').forEach(function (a) {
+    function handler(e) { e.preventDefault(); e.stopPropagation(); go(parseInt(a.getAttribute('data-go'), 10) - 1); }
+    a.addEventListener('click', handler);
+    a.addEventListener('mousedown', function (e) { e.stopPropagation(); });
+    a.addEventListener('touchstart', function (e) { e.stopPropagation(); }, { passive: true });
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (!flip) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); flip.flipNext(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); flip.flipPrev(); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(TOTAL - 1); }
+  });
+
+  window.addEventListener('hashchange', function () { go(pageFromHash()); });
+
+  var fsBtn = document.getElementById('fs');
+  fsBtn.addEventListener('click', function () {
+    try {
+      if (document.fullscreenElement) { document.exitFullscreen(); }
+      else {
+        var p = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+        if (p && p.catch) p.catch(function () { fsBtn.disabled = true; });
+      }
+    } catch (e) { fsBtn.disabled = true; }
+  });
+
+  var rt;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () { fit(); if (flip) flip.update(); }, 120);
+  });
+  document.addEventListener('fullscreenchange', function () { setTimeout(function () { fit(); flip && flip.update(); }, 150); });
+
+  buildThumbs();
+  if (window.St) init();
+  else window.addEventListener('load', function () { if (window.St) init(); });
+})();
+</script>
